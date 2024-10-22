@@ -1,0 +1,43 @@
+import wikipediaapi
+import re
+
+# Initialize Wikipedia API with a user agent
+wiki_wiki = wikipediaapi.Wikipedia(
+    language='en',
+    user_agent='YourAppName/1.0 (http://example.com; yourname@example.com)'
+)
+
+def get_wikipedia_summary(query):
+    # Try to get the page summary based on the query
+    page = wiki_wiki.page(query)
+    
+    # Check if the page exists
+    if page.exists():
+        return page.summary  # Return the full summary
+    else:
+        # Suggest alternative queries
+        if query.lower() == "python":
+            alternative_query = "Python (programming language)"
+            page = wiki_wiki.page(alternative_query)
+            if page.exists():
+                return page.summary  # Return the summary for the alternative query
+        return "Sorry, I couldn't find any information on that topic."
+
+# Simple chatbot function
+def chatbot():
+    print("Chatbot: Hi! Ask me anything, and I'll try to find the answer. Type 'bye' to exit.")
+    while True:
+        user_input = input("You: ")
+
+        # Exit condition
+        if re.search(r"\b(bye|exit|quit)\b", user_input, re.I):
+            print("Chatbot: Goodbye!")
+            break
+
+        # Fetch summary from Wikipedia based on the user's input
+        response = get_wikipedia_summary(user_input)
+        print(f"Chatbot: {response}")
+
+# Run the chatbot
+if __name__ == "__main__":
+    chatbot()
